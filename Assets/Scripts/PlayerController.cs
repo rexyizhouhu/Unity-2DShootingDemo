@@ -5,13 +5,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float speed = 10;
-    public int health = 100;
+    public float health = 100;
     public bool facingRight = true;
     public Transform gun;
     public Transform shotPos;
     public float curSpeed;
-    public int attack = 20;
+    public float attack = 20;
     public bool burstMode = false;
+    public float speedAfterHurt = 7.5f;
+    public float attackAfterHurt = 30.0f;
 
     //Animator animator;
     float h;
@@ -60,8 +62,7 @@ public class PlayerController : MonoBehaviour
         var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         var direction = mousePos - transform.position;
 
-        if (!facingRight && direction.x > 0) Flip();
-        else if (facingRight && direction.x < 0) Flip();
+        if (!facingRight && direction.x > 0 || facingRight && direction.x < 0) Flip();
     }
 
     void Flip()
@@ -102,8 +103,8 @@ public class PlayerController : MonoBehaviour
         {
             var m_SpriteRenderer = GetComponent<SpriteRenderer>();
             m_SpriteRenderer.color = Color.red;
-            speed = speed * 3 / 4;
-            attack *= 2;
+            speed = speedAfterHurt;
+            attack = attackAfterHurt;
             burstMode = true;
         }
     }

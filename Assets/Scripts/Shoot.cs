@@ -97,9 +97,12 @@ public class Shoot : MonoBehaviour
 
     void Shot()
     {
-        var newBullet1 = Instantiate(bullet, shotPoint.position, shotPoint.rotation);
-        var newBullet2 = Instantiate(bullet, shotPoint.position, shotPoint.rotation * Quaternion.Euler(0, 0, 15));
-        var newBullet3 = Instantiate(bullet, shotPoint.position, shotPoint.rotation * Quaternion.Euler(0, 0, -15));
+        InitiateBullet(Quaternion.Euler(0, 0, 0), player);
+        InitiateBullet(Quaternion.Euler(0, 0, 15), player);
+        InitiateBullet(Quaternion.Euler(0, 0, -15), player);
+        //var newBullet1 = Instantiate(bullet, shotPoint.position, shotPoint.rotation);
+        //var newBullet2 = Instantiate(bullet, shotPoint.position, shotPoint.rotation * Quaternion.Euler(0, 0, 15));
+        //var newBullet3 = Instantiate(bullet, shotPoint.position, shotPoint.rotation * Quaternion.Euler(0, 0, -15));
         animator.SetTrigger("Shoot");
         //Debug.Log(Quaternion.AngleAxis(-15, shotPoint.forward));
         //newBullet.isCharFacingRight = GetComponentInParent<PlayerController>().facingRight;
@@ -108,6 +111,12 @@ public class Shoot : MonoBehaviour
         player.curSpeed = player.speed / 1.5f;
 
         if (!isFlashing) StartCoroutine(FlashMuzzleFlash());
+    }
+
+    void InitiateBullet(Quaternion changeInAngle, PlayerController shooter)
+    {
+        var newBullet = Instantiate(bullet, shotPoint.position, shotPoint.rotation * changeInAngle);
+        newBullet.shooter = shooter;
     }
 
     IEnumerator FlashMuzzleFlash()

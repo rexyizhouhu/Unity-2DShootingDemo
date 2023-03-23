@@ -107,6 +107,7 @@ MonoBehaviour:
     m_Bits: 2147483647
   isCharFacingRight: 0
   random: 1
+  shooter: {fileID: 0}
 --- !u!95 &103779372873604636
 Animator:
   serializedVersion: 5

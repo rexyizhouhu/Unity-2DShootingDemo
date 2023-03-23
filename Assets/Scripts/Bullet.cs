@@ -11,6 +11,7 @@ public class Bullet : MonoBehaviour
     public LayerMask whatIsSolid;
     public bool isCharFacingRight = true;
     public bool random = true;
+    public PlayerController shooter;
 
     Rigidbody2D rb;
 
@@ -25,12 +26,16 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
-        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, transform.up, distance, whatIsSolid);
-        if (hitInfo.collider != null)  
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
         {
-            DestroyBullet();
+            collision.gameObject.GetComponent<Enemy>().TakeDamage(shooter.attack);
         }
-        
+
+        DestroyBullet();
     }
 
     public void DestroyBullet()
