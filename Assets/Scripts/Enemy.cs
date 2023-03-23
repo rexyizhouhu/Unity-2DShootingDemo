@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour
     void FixedUpdate()
     {
         if (rb && Mathf.Abs(direction.magnitude) > eps) Move(movement);
+        //Move(movement);
         //Debug.Log("hi");
     }
 
@@ -70,16 +71,20 @@ public class Enemy : MonoBehaviour
 
     void HurtPlayer()
     {
-        if (player.GetComponent<PlayerController>().health > 0) 
+        if (player.GetComponent<PlayerController>().health > 0)
+        {
             player.GetComponent<PlayerController>().health -= attack;
+            Debug.Log("Damage!");
+        }
         timeToDamege = damageFreq;
-        //Debug.Log("Damage!");
     }
 
     void CalculateDir()
     {
         direction = player.position - transform.position;
         movement = direction.normalized;
+        Debug.Log(direction);
+        Debug.Log(player.position);
     }
 
     void ModifyEnemyFacing()
@@ -93,9 +98,11 @@ public class Enemy : MonoBehaviour
     void Move(Vector2 dir)
     {
         //Debug.Log("moving");
+        //rb.isKinematic = true;
         animator.SetBool("Move", true);
         rb.MovePosition((Vector2)transform.position + (dir * speed * Time.deltaTime));
-
+        //rb.MovePosition((Vector2)transform.position + new Vector2(10, 0));
+        //rb.isKinematic = false;
         //Debug.Log((dir * speed * Time.deltaTime));
         //Debug.Log((Vector2)transform.position + (dir * speed * Time.deltaTime));
         //Debug.Log(transform.position);
