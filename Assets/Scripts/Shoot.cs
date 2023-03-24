@@ -23,11 +23,13 @@ public class Shoot : MonoBehaviour
     float timeShot = 0;
     readonly float shotFreq = 0.05f;
     PlayerController player;
+    AudioSource shootingSound;
 
     void Start()
     {
         player = GetComponent<PlayerController>();
         muzzleFlash.SetActive(false);
+        shootingSound = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -66,10 +68,6 @@ public class Shoot : MonoBehaviour
             {
                 Shot();
             }
-            else
-            {
-                player.curSpeed = player.speed;
-            }
         }
         else
         {
@@ -79,11 +77,12 @@ public class Shoot : MonoBehaviour
 
     void ShotKameHameHa()
     {
-        Instantiate(KameHameHa, shotPoint.position, shotPoint.rotation);
+        player.attack = 9999f;
+        Invoke("DecreasePlayerAttack", 1);
+        InitiateBullet(KameHameHa, Quaternion.Euler(0, 0, 0), player);
 
         animator.SetTrigger("Shoot");
         cam.GetComponent<CameraShake>().Shake(1.5f, .5f);
-        player.curSpeed = 0;
 
         if (!isFlashing) StartCoroutine(FlashMuzzleFlash());
 
@@ -91,11 +90,16 @@ public class Shoot : MonoBehaviour
         specialBulletRemain--;
     }
 
+    void DecreasePlayerAttack()
+    {
+        player.attack = player.attackAfterHurt;
+    }
+
     void Shot()
     {
-        InitiateBullet(Quaternion.Euler(0, 0, 0), player);
-        InitiateBullet(Quaternion.Euler(0, 0, 15), player);
-        InitiateBullet(Quaternion.Euler(0, 0, -15), player);
+        InitiateBullet(bullet, Quaternion.Euler(0, 0, 0), player);
+        InitiateBullet(bullet, Quaternion.Euler(0, 0, 15), player);
+        InitiateBullet(bullet, Quaternion.Euler(0, 0, -15), player);
         //var newBullet1 = Instantiate(bullet, shotPoint.position, shotPoint.rotation);
         //var newBullet2 = Instantiate(bullet, shotPoint.position, shotPoint.rotation * Quaternion.Euler(0, 0, 15));
         //var newBullet3 = Instantiate(bullet, shotPoint.position, shotPoint.rotation * Quaternion.Euler(0, 0, -15));
@@ -107,11 +111,17 @@ public class Shoot : MonoBehaviour
         player.curSpeed = player.speed / 1.5f;
 
         if (!isFlashing) StartCoroutine(FlashMuzzleFlash());
+        PlayShootingSound();
     }
 
-    void InitiateBullet(Quaternion changeInAngle, PlayerController shooter)
+    void PlayShootingSound()
     {
-        var newBullet = Instantiate(bullet, shotPoint.position, shotPoint.rotation * changeInAngle);
+        shootingSound.Play();
+    }
+
+    void InitiateBullet(Bullet b, Quaternion changeInAngle, PlayerController shooter)
+    {
+        var newBullet = Instantiate(b, shotPoint.position, shotPoint.rotation * changeInAngle);
         newBullet.shooter = shooter;
     }
 

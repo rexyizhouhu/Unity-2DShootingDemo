@@ -1,6 +1,8 @@
+using Mono.Cecil.Cil;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.FilePathAttribute;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,19 +11,21 @@ public class PlayerController : MonoBehaviour
     public bool facingRight = true;
     public Transform gun;
     public Transform shotPos;
-    public float curSpeed;
     public float attack = 20;
     public bool burstMode = false;
     public float speedAfterHurt = 7.5f;
     public float attackAfterHurt = 30.0f;
     public HealthBar healthBar;
+    public int kills;
+    public readonly float invincibleTime = 1f;
+    public float curSpeed;
 
     //Animator animator;
     float h;
     float v;
     SpriteRenderer m_SpriteRenderer;
     Color originalColor;
-
+    float curInvincibleTime;
 
     // Start is called before the first frame update
     void Start()
@@ -31,11 +35,17 @@ public class PlayerController : MonoBehaviour
         curSpeed = speed;
         healthBar.SetMaxHealth(health);
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        originalColor = m_SpriteRenderer.color;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(Time.time);
+        
+
+        if (curInvincibleTime > 0) curInvincibleTime -= Time.deltaTime;
+
         GetInputs();
 
         MoveCharacter();
@@ -109,6 +119,8 @@ public class PlayerController : MonoBehaviour
                 m_SpriteRenderer.color = Color.red;
             }
 
+            if (burstMode) return;
+
             speed = speedAfterHurt;
             attack = attackAfterHurt;
             burstMode = true;
@@ -123,6 +135,8 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(float damage, Vector3 direction)
     {
+        if (curInvincibleTime > 0) return;
+
         health -= damage;
         healthBar.SetHealth(health);
 
@@ -131,7 +145,6 @@ public class PlayerController : MonoBehaviour
             transform.position += direction * 2;
         }
 
-        originalColor = m_SpriteRenderer.color;
         m_SpriteRenderer.color = Color.yellow;
         Invoke("ChangeColorBack", 0.5f);
     }

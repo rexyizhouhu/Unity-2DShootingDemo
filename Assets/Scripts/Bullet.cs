@@ -36,7 +36,7 @@ public class Bullet : MonoBehaviour
             collision.gameObject.GetComponent<Enemy>().TakeDamage(shooter.attack);
         }
 
-        DestroyBullet();
+        if (shooter.attack < 100) DestroyBullet();
     }
 
     public void DestroyBullet()
