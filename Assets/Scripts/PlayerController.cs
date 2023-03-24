@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour
     {
         if (health <= 0)
         {
-            Debug.Log("You are dead");
+            PlayerDied();
         }
         if (health <= 50)
         {
@@ -113,6 +113,12 @@ public class PlayerController : MonoBehaviour
             attack = attackAfterHurt;
             burstMode = true;
         }
+    }
+
+    void PlayerDied()
+    {
+        LevelManager.instance.GameOver();
+        gameObject.SetActive(false);
     }
 
     public void TakeDamage(float damage, Vector3 direction)
