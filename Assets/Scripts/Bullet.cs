@@ -26,6 +26,7 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        //Debug.Log(transform.rotation);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

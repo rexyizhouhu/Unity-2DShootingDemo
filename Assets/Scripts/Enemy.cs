@@ -6,8 +6,8 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public Transform player;
-    public float speed = 7;
-    public float health = 50;
+    public float speed = 8;
+    public float health = 1000;
     public float attack = 5;
     
 
@@ -16,10 +16,11 @@ public class Enemy : MonoBehaviour
     Animator animator;
     Vector2 movement;
     Vector3 direction;
-    float eps = 0.1f;
+    readonly float eps = 0.1f;
     float timeToDamege = .5f;
     float damageFreq = 1f;
     bool dead = false;
+    float freezingTime;
 
     // Start is called before the first frame update
     void Start()
@@ -38,7 +39,18 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (dead) return;
+        //Debug.Log(dead);
+
+        if (dead)
+        {
+            if (Time.timeScale == 0)
+            {
+                UnfreezeGame();
+            }
+            else return;
+        }
+
+        UnfreezeGame();
 
         CalculateDir();
         //float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -66,15 +78,37 @@ public class Enemy : MonoBehaviour
         if (health <= 0) return;
 
         health -= damageAmount;
+        transform.position -= new Vector3(movement.x, movement.y);
+
+        FreezeGame();
+
         if (health <= 0) ApplyDeath();
+    }
+
+    void FreezeGame()
+    {
+        Time.timeScale = 0;
+        freezingTime = Time.unscaledTime;
+    }
+
+    void UnfreezeGame()
+    {
+        if (Time.timeScale == 0)
+        {
+            if (Time.unscaledTime - freezingTime >= 0.02)
+            {
+                Time.timeScale = 1;
+            }
+        }
     }
 
     void HurtPlayer()
     {
-        if (player.GetComponent<PlayerController>().health > 0)
+        var playerController = player.GetComponent<PlayerController>();
+        if (playerController.health > 0)
         {
-            player.GetComponent<PlayerController>().health -= attack;
-            Debug.Log("Damage!");
+            playerController.TakeDamage(attack, movement);
+            //Debug.Log("Damage!");
         }
         timeToDamege = damageFreq;
     }
@@ -83,8 +117,8 @@ public class Enemy : MonoBehaviour
     {
         direction = player.position - transform.position;
         movement = direction.normalized;
-        Debug.Log(direction);
-        Debug.Log(player.position);
+        //Debug.Log(direction);
+        //Debug.Log(player.position);
     }
 
     void ModifyEnemyFacing()

@@ -14,12 +14,14 @@ public class PlayerController : MonoBehaviour
     public bool burstMode = false;
     public float speedAfterHurt = 7.5f;
     public float attackAfterHurt = 30.0f;
+    public HealthBar healthBar;
 
     //Animator animator;
     float h;
     float v;
-    bool fire;
-    
+    SpriteRenderer m_SpriteRenderer;
+    Color originalColor;
+
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +29,8 @@ public class PlayerController : MonoBehaviour
         //animator = GetComponent<Animator>();
         //animator.SetInteger("Health", 100);
         curSpeed = speed;
+        healthBar.SetMaxHealth(health);
+        m_SpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -44,7 +48,6 @@ public class PlayerController : MonoBehaviour
     {
         h = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
-        fire = Input.GetButtonDown("Fire1");
     }
 
     void MoveCharacter()
@@ -101,11 +104,34 @@ public class PlayerController : MonoBehaviour
         }
         if (health <= 50)
         {
-            var m_SpriteRenderer = GetComponent<SpriteRenderer>();
-            m_SpriteRenderer.color = Color.red;
+            if (m_SpriteRenderer.color != Color.yellow && m_SpriteRenderer.color != Color.red)
+            {
+                m_SpriteRenderer.color = Color.red;
+            }
+
             speed = speedAfterHurt;
             attack = attackAfterHurt;
             burstMode = true;
         }
+    }
+
+    public void TakeDamage(float damage, Vector3 direction)
+    {
+        health -= damage;
+        healthBar.SetHealth(health);
+
+        if (direction.x != 0 || direction.y != 0)
+        {
+            transform.position += direction * 2;
+        }
+
+        originalColor = m_SpriteRenderer.color;
+        m_SpriteRenderer.color = Color.yellow;
+        Invoke("ChangeColorBack", 0.5f);
+    }
+
+    void ChangeColorBack()
+    {
+        m_SpriteRenderer.color = originalColor;
     }
 }

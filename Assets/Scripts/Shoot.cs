@@ -21,15 +21,11 @@ public class Shoot : MonoBehaviour
 
     Vector2 direction;
     float timeShot = 0;
-    float shotFreq = 0.05f;
-    float gunLocalScaleY;
-    float shotPointLocalScaleY;
+    readonly float shotFreq = 0.05f;
     PlayerController player;
 
     void Start()
     {
-        gunLocalScaleY = gun.transform.localScale.y;
-        shotPointLocalScaleY = shotPoint.transform.localScale.y;
         player = GetComponent<PlayerController>();
         muzzleFlash.SetActive(false);
     }
@@ -83,7 +79,7 @@ public class Shoot : MonoBehaviour
 
     void ShotKameHameHa()
     {
-        var newBullet1 = Instantiate(KameHameHa, shotPoint.position, shotPoint.rotation);
+        Instantiate(KameHameHa, shotPoint.position, shotPoint.rotation);
 
         animator.SetTrigger("Shoot");
         cam.GetComponent<CameraShake>().Shake(1.5f, .5f);
