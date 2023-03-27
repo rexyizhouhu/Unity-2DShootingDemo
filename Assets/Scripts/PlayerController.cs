@@ -121,7 +121,6 @@ public class PlayerController : MonoBehaviour
 
             if (burstMode) return;
 
-            speed = speedAfterHurt;
             attack = attackAfterHurt;
             burstMode = true;
         }

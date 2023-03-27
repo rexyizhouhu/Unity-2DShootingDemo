@@ -20,7 +20,8 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enemiesSpawnCoolDown <= 0) SpawnEnemies((int)Mathf.Ceil(Time.time / 3));
+        //Debug.Log(Time.timeSinceLevelLoad);
+        if (enemiesSpawnCoolDown <= 0) SpawnEnemies((int)Mathf.Ceil(Time.timeSinceLevelLoad / 3));
         else enemiesSpawnCoolDown -= Time.deltaTime;
     }
 
